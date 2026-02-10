@@ -1,0 +1,21 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+<h1>Рассылки</h1>
+<a class="btn btn-primary mb-3" href="{% url 'mailing:mailing_add' %}">Добавить рассылку</a>
+<table class="table">
+  <thead><tr><th>ID</th><th>Сообщение</th><th>Период</th><th>Статус</th><th></th></tr></thead>
+  <tbody>
+    {% for m in object_list %}
+    <tr>
+      <td>{{ m.pk }}</td>
+      <td>{{ m.message.subject }}</td>
+      <td>{{ m.start_at }} — {{ m.end_at }}</td>
+      <td>{{ m.get_status_display }}</td>
+      <td><a class="btn btn-sm btn-outline-primary" href="{% url 'mailing:mailing_detail' m.pk %}">Открыть</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Нет рассылок.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

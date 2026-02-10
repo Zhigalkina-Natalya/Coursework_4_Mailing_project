@@ -1,0 +1,14 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+<h1>Сообщения</h1>
+<a class="btn btn-primary mb-3" href="{% url 'mailing:message_add' %}">Добавить сообщение</a>
+<ul class="list-group">
+  {% for m in object_list %}
+    <li class="list-group-item">
+      <strong>{{ m.subject }}</strong>
+    </li>
+  {% empty %}
+    <li class="list-group-item">Пока нет сообщений.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

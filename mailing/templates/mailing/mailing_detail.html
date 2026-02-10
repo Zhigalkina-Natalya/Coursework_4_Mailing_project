@@ -1,0 +1,32 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+<h1>Рассылка #{{ object.pk }}</h1>
+<p><strong>Сообщение:</strong> {{ object.message.subject }}</p>
+<p><strong>Период:</strong> {{ object.start_at }} — {{ object.end_at }}</p>
+<p><strong>Статус:</strong> {{ object.get_status_display }}</p>
+
+<h3>Получатели</h3>
+<ul>
+  {% for r in object.recipients.all %}
+    <li>{{ r.email }} {% if r.full_name %}({{ r.full_name }}){% endif %}</li>
+  {% empty %}
+    <li>Нет получателей.</li>
+  {% endfor %}
+</ul>
+
+<form method="post" action="{% url 'mailing:mailing_send' object.pk %}">
+  {% csrf_token %}
+  <button class="btn btn-primary">Отправить сейчас</button>
+</form>
+
+<h3 class="mt-4">Попытки отправки</h3>
+<ul>
+  {% for a in object.attempts.all %}
+    <li>{{ a.attempted_at }} — {{ a.get_status_display }} — {{ a.server_response }}</li>
+  {% empty %}
+    <li>Попыток нет.</li>
+  {% endfor %}
+</ul>
+
+<a class="btn btn-secondary mt-3" href="{% url 'mailing:mailing_list' %}">Назад</a>
+{% endblock %}
