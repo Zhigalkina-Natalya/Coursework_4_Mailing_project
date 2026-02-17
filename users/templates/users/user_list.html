@@ -1,0 +1,62 @@
+{% extends 'mailing/base.html' %}
+{% block title %}Пользователи сервиса{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Пользователи сервиса</h1>
+
+  <table class="table table-striped align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>Email</th>
+        <th>Статус</th>
+        <th>Роль</th>
+        <th>Действие</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for u in users %}
+      <tr>
+        <td>{{ u.email }}</td>
+
+        <td>
+          {% if u.is_active %}
+            <span class="badge bg-success">Активен</span>
+          {% else %}
+            <span class="badge bg-secondary">Заблокирован</span>
+          {% endif %}
+        </td>
+
+        <td>
+          {% if u.is_superuser %}
+            <span class="badge bg-danger">Администратор</span>
+          {% elif u.groups.all.0.name == "Менеджеры" %}
+            <span class="badge bg-primary">Менеджер</span>
+          {% else %}
+            <span class="badge bg-info text-dark">Пользователь</span>
+          {% endif %}
+        </td>
+
+        <td>
+          {% if u.is_superuser %}
+            <span class="text-muted">недоступно</span>
+          {% else %}
+            {% if u.is_active %}
+              <a href="{% url 'users:toggle_user_active' u.pk %}" class="btn btn-sm btn-outline-danger">
+                Заблокировать
+              </a>
+            {% else %}
+              <a href="{% url 'users:toggle_user_active' u.pk %}" class="btn btn-sm btn-outline-success">
+                Разблокировать
+              </a>
+            {% endif %}
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4" class="text-center">Нет пользователей.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

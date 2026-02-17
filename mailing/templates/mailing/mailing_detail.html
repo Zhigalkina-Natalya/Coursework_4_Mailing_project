@@ -2,7 +2,7 @@
 {% block content %}
 <h1>Рассылка #{{ object.pk }}</h1>
 <p><strong>Сообщение:</strong> {{ object.message.subject }}</p>
-<p><strong>Период:</strong> {{ object.start_at }} — {{ object.end_at }}</p>
+<p><strong>Период:</strong> {{ object.start_time }} — {{ object.end_time }}</p>
 <p><strong>Статус:</strong> {{ object.get_status_display }}</p>
 
 <h3>Получатели</h3>

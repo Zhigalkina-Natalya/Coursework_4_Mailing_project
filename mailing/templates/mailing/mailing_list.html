@@ -1,21 +1,56 @@
 {% extends 'mailing/base.html' %}
+
 {% block content %}
-<h1>Рассылки</h1>
-<a class="btn btn-primary mb-3" href="{% url 'mailing:mailing_add' %}">Добавить рассылку</a>
-<table class="table">
-  <thead><tr><th>ID</th><th>Сообщение</th><th>Период</th><th>Статус</th><th></th></tr></thead>
-  <tbody>
-    {% for m in object_list %}
-    <tr>
-      <td>{{ m.pk }}</td>
-      <td>{{ m.message.subject }}</td>
-      <td>{{ m.start_at }} — {{ m.end_at }}</td>
-      <td>{{ m.get_status_display }}</td>
-      <td><a class="btn btn-sm btn-outline-primary" href="{% url 'mailing:mailing_detail' m.pk %}">Открыть</a></td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="5">Нет рассылок.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="container mt-4">
+    <h1 class="mb-3">Рассылки</h1>
+
+    <a class="btn btn-primary mb-3" href="{% url 'mailing:mailing_add' %}">Добавить рассылку</a>
+
+    <ul class="list-group">
+        {% for mailing in object_list %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                <strong>{{ mailing.message.subject }}</strong><br>
+                <small class="text-muted">
+                    {{ mailing.start_time|date:"d.m.Y H:i" }} — {{ mailing.end_time|date:"d.m.Y H:i" }}
+                </small><br>
+                <span class="badge bg-info text-dark mt-1">{{ mailing.get_status_display }}</span>
+                {% if not mailing.is_active %}
+                <span class="badge bg-secondary text-light ms-1">Отключена</span>
+                {% endif %}
+            </div>
+
+            <div class="d-flex align-items-center">
+                <a href="{% url 'mailing:mailing_detail' mailing.pk %}" class="btn btn-sm btn-outline-primary me-1">
+                    Открыть
+                </a>
+
+                {% if user == mailing.owner or user.is_superuser %}
+                <a href="{% url 'mailing:mailing_edit' mailing.pk %}" class="btn btn-sm btn-outline-secondary me-1">
+                    Редактировать
+                </a>
+                <a href="{% url 'mailing:mailing_delete' mailing.pk %}" class="btn btn-sm btn-outline-danger me-1">
+                    Удалить
+                </a>
+                {% endif %}
+
+                {% if perms.mailing.can_disable_mailings %}
+                    {% if mailing.is_active %}
+                        <a href="{% url 'mailing:mailing_toggle' mailing.pk %}" class="btn btn-sm btn-warning">
+                            Отключить
+                        </a>
+                    {% else %}
+                        <a href="{% url 'mailing:mailing_toggle' mailing.pk %}" class="btn btn-sm btn-success">
+                            Включить
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        </li>
+        {% empty %}
+        <li class="list-group-item">Пока нет рассылок.</li>
+        {% endfor %}
+    </ul>
+</div>
 {% endblock %}

@@ -9,7 +9,10 @@ logger = logging.getLogger(__name__)
 
 
 def send_email_to_recipient(subject, body, recipient_email, from_email):
-    """Отправляет письмо одному получателю и возвращает результат."""
+    """
+    Отправляет письмо одному получателю и возвращает результат.
+    Возвращает кортеж (status, response).
+    """
     try:
         result = send_mail(subject, body, from_email, [recipient_email])
         status = MailAttempt.STATUS_SUCCESS
@@ -23,17 +26,32 @@ def send_email_to_recipient(subject, body, recipient_email, from_email):
 
 
 def send_mailing_instance(mailing, from_email):
-    """Отправляет письма всем получателям выбранной рассылки."""
+    """
+    Отправляет письма всем получателям выбранной рассылки.
+    Пропускает рассылку, если она отключена (is_active=False).
+    """
+    if not mailing.is_active:
+        logger.info(f"Рассылка #{mailing.pk} отключена, отправка пропущена.")
+        return
+
     logger.info(f"Запуск рассылки #{mailing.pk}: {mailing.message.subject}")
     mailing.status = Mailing.STATUS_RUNNING
     mailing.save(update_fields=["status"])
 
     for recipient in mailing.recipients.all():
         status, response = send_email_to_recipient(
-            mailing.message.subject, mailing.message.body, recipient.email, from_email
+            mailing.message.subject,
+            mailing.message.body,
+            recipient.email,
+            from_email,
         )
-        MailAttempt.objects.create(mailing=mailing, recipient=recipient, status=status, server_response=response)
+        MailAttempt.objects.create(
+            mailing=mailing,
+            recipient=recipient,
+            status=status,
+            server_response=response,
+        )
 
-    mailing.status = Mailing.STATUS_FINISHED if timezone.now() >= mailing.end_at else Mailing.STATUS_RUNNING
+    mailing.status = Mailing.STATUS_FINISHED if timezone.now() >= mailing.end_time else Mailing.STATUS_RUNNING
     mailing.save(update_fields=["status"])
     logger.info(f"Рассылка #{mailing.pk} завершена со статусом {mailing.status}.")
