@@ -12,7 +12,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
 from .forms import MailingForm, MessageForm, RecipientForm
-from .models import Mailing, Message, Recipient, MailAttempt
+from .models import MailAttempt, Mailing, Message, Recipient
 from .services import send_mailing_instance
 
 
@@ -54,9 +54,9 @@ class OwnerPermissionMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         obj = self.get_object()
         if (
-                obj.owner != request.user
-                and not request.user.is_superuser
-                and not request.user.groups.filter(name="Менеджеры").exists()
+            obj.owner != request.user
+            and not request.user.is_superuser
+            and not request.user.groups.filter(name="Менеджеры").exists()
         ):
             messages.error(request, "У вас нет прав для этого действия.")
             raise PermissionDenied
@@ -282,6 +282,7 @@ def toggle_mailing_activity(request, pk):
 
 class MailAttemptListView(OwnerFilterMixin, ListView):
     """Список попыток рассылок (только свои, если не менеджер/админ)."""
+
     model = MailAttempt
     template_name = "mailing/mailattempt_list.html"
     context_object_name = "attempts"

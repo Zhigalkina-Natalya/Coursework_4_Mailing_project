@@ -12,9 +12,10 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.views.generic import FormView, View, TemplateView, UpdateView
+from django.views.generic import FormView, TemplateView, UpdateView, View
 
-from users.forms import LoginForm, RegisterForm, ResendActivationForm, ProfileForm
+from users.forms import (LoginForm, ProfileForm, RegisterForm,
+                         ResendActivationForm)
 from users.models import User
 
 
@@ -115,13 +116,16 @@ class LogoutView(View):
         messages.info(request, "Вы вышли из системы.")
         return redirect("users:login")
 
+
 class ProfileView(LoginRequiredMixin, TemplateView):
     """Просмотр профиля пользователя."""
+
     template_name = "users/profile.html"
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     """Редактирование профиля пользователя."""
+
     model = User
     form_class = ProfileForm
     template_name = "users/profile_edit.html"
@@ -129,6 +133,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self):
         return self.request.user
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser or u.groups.filter(name="Менеджеры").exists())
