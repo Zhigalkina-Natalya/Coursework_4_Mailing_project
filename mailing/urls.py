@@ -24,6 +24,8 @@ urlpatterns = [
     path("mailings/<int:pk>/edit/", views.MailingUpdateView.as_view(), name="mailing_edit"),
     path("mailings/<int:pk>/delete/", views.MailingDeleteView.as_view(), name="mailing_delete"),
     path("mailings/<int:pk>/toggle/", toggle_mailing_activity, name="mailing_toggle"),
+    # attempts
+    path("attempts/", views.MailAttemptListView.as_view(), name="attempt_list"),
     # ручной запуск через UI
     path("mailings/<int:pk>/send/", views.send_mailing_view, name="mailing_send"),
 ]

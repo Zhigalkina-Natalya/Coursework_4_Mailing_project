@@ -38,3 +38,15 @@ class ResendActivationForm(forms.Form):
     email = forms.EmailField(
         label="Email", widget=forms.EmailInput(attrs={"class": "form-control", "placeholder": "Введите email"})
     )
+
+
+class ProfileForm(forms.ModelForm):
+    """Форма редактирования профиля пользователя."""
+
+    class Meta:
+        model = User
+        fields = ("avatar", "phone", "country")
+        widgets = {
+            "phone": forms.TextInput(attrs={"class": "form-control", "placeholder": "+7..."}),
+            "country": forms.TextInput(attrs={"class": "form-control", "placeholder": "Страна"}),
+        }

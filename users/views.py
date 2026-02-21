@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView as DjangoLoginView
 from django.contrib.sites.shortcuts import get_current_site
@@ -11,9 +12,9 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.views.generic import FormView, View
+from django.views.generic import FormView, View, TemplateView, UpdateView
 
-from users.forms import LoginForm, RegisterForm, ResendActivationForm
+from users.forms import LoginForm, RegisterForm, ResendActivationForm, ProfileForm
 from users.models import User
 
 
@@ -114,6 +115,20 @@ class LogoutView(View):
         messages.info(request, "Вы вышли из системы.")
         return redirect("users:login")
 
+class ProfileView(LoginRequiredMixin, TemplateView):
+    """Просмотр профиля пользователя."""
+    template_name = "users/profile.html"
+
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """Редактирование профиля пользователя."""
+    model = User
+    form_class = ProfileForm
+    template_name = "users/profile_edit.html"
+    success_url = reverse_lazy("users:profile")
+
+    def get_object(self):
+        return self.request.user
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser or u.groups.filter(name="Менеджеры").exists())

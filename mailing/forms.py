@@ -38,7 +38,7 @@ class MessageForm(BootstrapFormMixin, forms.ModelForm):
 
 
 class MailingForm(BootstrapFormMixin, forms.ModelForm):
-    """Форма для создания и редактирования рассылки с проверкой дат."""
+    """Форма для создания и редактирования рассылки с проверкой дат и фильтрацией по владельцу."""
 
     start_time = forms.DateTimeField(
         label="Дата начала",
@@ -54,6 +54,19 @@ class MailingForm(BootstrapFormMixin, forms.ModelForm):
     class Meta:
         model = Mailing
         fields = ["start_time", "end_time", "message", "recipients"]
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+        # Фильтруем доступные сообщения и получателей по владельцу
+        if user and not (user.is_superuser or user.groups.filter(name="Менеджеры").exists()):
+            self.fields["message"].queryset = Message.objects.filter(owner=user)
+            self.fields["recipients"].queryset = Recipient.objects.filter(owner=user)
+        else:
+            # менеджеры и суперпользователи видят всё
+            self.fields["message"].queryset = Message.objects.all()
+            self.fields["recipients"].queryset = Recipient.objects.all()
 
     def clean(self):
         cleaned_data = super().clean()

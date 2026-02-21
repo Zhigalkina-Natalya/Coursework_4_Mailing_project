@@ -23,6 +23,9 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'mailing:recipient_list' %}">Получатели</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'mailing:message_list' %}">Сообщения</a></li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'mailing:mailing_list' %}">Рассылки</a></li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="{% url 'mailing:attempt_list' %}">Попытки рассылок</a></li>
+                {% endif %}
 
                 {% if user.is_authenticated %}
                     {% if user.is_superuser or user.groups.all.0.name == 'Менеджеры' %}
@@ -38,6 +41,9 @@
                     <li class="nav-item d-flex align-items-center me-2">
                         <span class="text-muted small">Вы вошли как:</span>&nbsp;
                         <span class="fw-semibold">{{ user.email }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-secondary btn-sm me-2" href="{% url 'users:profile' %}">Профиль</a>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-outline-danger btn-sm" href="{% url 'users:logout' %}">Выйти</a>
