@@ -1,0 +1,25 @@
+{% extends 'mailing/base.html' %}
+{% block title %}Главная — Mailer{% endblock %}
+{% block content %}
+<h1>Статистика</h1>
+<div class="row">
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h5>Всего рассылок</h5>
+      <p class="display-6">{{ total_mailings }}</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h5>Активных (Запущена)</h5>
+      <p class="display-6">{{ active_mailings }}</p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-3">
+      <h5>Уникальных получателей</h5>
+      <p class="display-6">{{ unique_recipients }}</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

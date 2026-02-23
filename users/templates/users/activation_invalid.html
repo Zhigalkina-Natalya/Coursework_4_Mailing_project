@@ -1,0 +1,10 @@
+{% extends 'mailing/base.html' %}
+{% block title %}Ошибка активации{% endblock %}
+{% block content %}
+<div class="container mt-5 col-md-6">
+  <div class="alert alert-danger">
+    <h4>Неверная или просроченная ссылка активации.</h4>
+    <p>Попробуйте <a href="{% url 'users:resend_activation' %}">отправить письмо повторно</a>.</p>
+  </div>
+</div>
+{% endblock %}
