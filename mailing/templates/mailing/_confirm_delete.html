@@ -1,0 +1,15 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-sm p-4 text-center">
+    <h4>Удалить "{{ object }}"?</h4>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mt-4">
+        <button type="submit" class="btn btn-danger me-2">Да, удалить</button>
+        <a href="{{ cancel_url }}" class="btn btn-secondary">Отмена</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

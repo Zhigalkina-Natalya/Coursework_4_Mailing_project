@@ -1,0 +1,13 @@
+{% extends 'mailing/base.html' %}
+{% block title %}Редактирование профиля{% endblock %}
+{% block content %}
+<div class="container mt-5 col-md-6">
+  <h2>Редактировать профиль</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success mt-2">Сохранить</button>
+    <a href="{% url 'users:profile' %}" class="btn btn-secondary mt-2">Отмена</a>
+  </form>
+</div>
+{% endblock %}
